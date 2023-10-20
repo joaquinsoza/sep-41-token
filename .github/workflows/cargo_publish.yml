@@ -11,6 +11,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - run: rustup update
-    - run: cargo publish -p sep-40-oracle
+    - run: cargo publish -p sep-41-token
       env:
         CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
