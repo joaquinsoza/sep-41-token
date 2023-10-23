@@ -49,8 +49,6 @@ impl MockToken {
         storage::bump_instance(&e);
 
         storage::set_admin(&e, &new_admin);
-
-        TokenEvents::set_admin(&e, admin, new_admin);
     }
 }
 

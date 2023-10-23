@@ -6,7 +6,7 @@
 #[cfg(any(test, feature = "testutils"))]
 pub mod testutils;
 
-use soroban_sdk::{contractclient, symbol_short, Address, Env, String, Symbol};
+use soroban_sdk::{contractclient, symbol_short, Address, Env, String};
 
 /// SEP-0041 Token Standard Trait
 #[contractclient(name = "TokenClient")]
@@ -128,41 +128,102 @@ pub trait Token {
     fn symbol(env: Env) -> String;
 }
 
+/// Extension for functions implemented by the SEP-0041 compliant native Stellar Asset
+/// Contract: https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-host/src/native_contract/token/contract.rs
+#[contractclient(name = "StellarAssetClient")]
+pub trait StellarAssetExtension {
+    /// Create `amount` of tokens and assigns them to `to`.
+    ///
+    /// Requires authorization by the admin.
+    ///
+    /// # Arguments
+    ///
+    /// - `to` - The address which will receive the created tokens.
+    /// - `amount` - The amount of tokens to be created.
+    fn mint(env: Env, to: Address, amount: i128);
+
+    /// Set the authorization status of an address to `authorize`.
+    ///
+    /// Requires authorization by the admin.
+    ///
+    /// # Arguments
+    ///
+    /// - `addr` - The address which will have their authorization modified.
+    /// - `authorize` - The authorization status to be set.
+    fn set_authorized(env: Env, addr: Address, authorize: bool);
+
+    /// Get the authorization status of an address.
+    ///
+    /// # Arguments
+    ///
+    /// - `addr` - The address which will have their authorization status queried.
+    fn authorized(env: Env, addr: Address) -> bool;
+
+    /// Clawback `amount` of tokens from `from`.
+    ///
+    /// Requires authorization by the admin.
+    ///
+    /// # Arguments
+    ///
+    /// - `from` - The address which will have their tokens clawed back.
+    /// - `amount` - The amount of tokens to be clawed back.
+    fn clawback(env: Env, from: Address, amount: i128);
+
+    /// Set the admin address to `new_admin`.
+    ///
+    /// Requires authorization by the admin.
+    ///
+    /// # Arguments
+    ///
+    /// - `new_admin` - The address which will be set as the new admin.
+    fn set_admin(env: Env, new_admin: Address);
+
+    /// Get the admin address.
+    fn admin(env: Env);
+}
+
 pub struct TokenEvents {}
 
 impl TokenEvents {
-    pub fn approve(env: &Env, from: Address, to: Address, amount: i128, expiration_ledger: u32) {
-        let topics = (symbol_short!("approve"), from, to);
+    /// Emitted when an allowance is set
+    ///
+    /// - topics - `["approve", from: Address, spender: Address]`
+    /// - data - `[amount: i128, live_until_ledger: u32]`
+    pub fn approve(
+        env: &Env,
+        from: Address,
+        spender: Address,
+        amount: i128,
+        expiration_ledger: u32,
+    ) {
+        let topics = (symbol_short!("approve"), from, spender);
         env.events().publish(topics, (amount, expiration_ledger));
     }
 
+    /// Emitted when an amount is transferred from one address to another
+    ///
+    /// - topics - `["transfer", from: Address, to: Address]`
+    /// - data - `[amount: i128]`
     pub fn transfer(env: &Env, from: Address, to: Address, amount: i128) {
         let topics = (symbol_short!("transfer"), from, to);
         env.events().publish(topics, amount);
     }
 
-    pub fn mint(env: &Env, admin: Address, to: Address, amount: i128) {
-        let topics = (symbol_short!("mint"), admin, to);
-        env.events().publish(topics, amount);
-    }
-
-    pub fn clawback(env: &Env, admin: Address, from: Address, amount: i128) {
-        let topics = (symbol_short!("clawback"), admin, from);
-        env.events().publish(topics, amount);
-    }
-
-    pub fn set_authorized(env: &Env, admin: Address, id: Address, authorize: bool) {
-        let topics = (Symbol::new(env, "set_authorized"), admin, id);
-        env.events().publish(topics, authorize);
-    }
-
-    pub fn set_admin(env: &Env, admin: Address, new_admin: Address) {
-        let topics = (symbol_short!("set_admin"), admin);
-        env.events().publish(topics, new_admin);
-    }
-
+    /// Emitted when an amount of tokens is burnt from one address
+    ///
+    /// - topics - `["burn", from: Address]`
+    /// - data - `[amount: i128]`
     pub fn burn(env: &Env, from: Address, amount: i128) {
         let topics = (symbol_short!("burn"), from);
+        env.events().publish(topics, amount);
+    }
+
+    /// Emitted when an amount of tokens is created and assigned to an address
+    ///
+    /// - topics - `["mint", admin: Address, to: Address]`
+    /// - data - `[amount: i128]`
+    pub fn mint(env: &Env, admin: Address, to: Address, amount: i128) {
+        let topics = (symbol_short!("mint"), admin, to);
         env.events().publish(topics, amount);
     }
 }

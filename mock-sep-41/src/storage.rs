@@ -152,6 +152,6 @@ pub fn set_allowance(
             .unwrap_optimized();
         e.storage()
             .temporary()
-            .bump(&key, expiration_ledger, ledgers_to_live);
+            .bump(&key, ledgers_to_live, ledgers_to_live);
     }
 }
