@@ -36,7 +36,7 @@ impl MockToken {
         check_nonnegative_amount(amount);
         let admin = storage::get_admin(&e);
         admin.require_auth();
-        storage::bump_instance(&e);
+        storage::extend_instance(&e);
 
         receive_balance(&e, &to, amount);
 
@@ -46,7 +46,7 @@ impl MockToken {
     pub fn set_admin(e: Env, new_admin: Address) {
         let admin = storage::get_admin(&e);
         admin.require_auth();
-        storage::bump_instance(&e);
+        storage::extend_instance(&e);
 
         storage::set_admin(&e, &new_admin);
     }
@@ -62,7 +62,7 @@ impl Token for MockToken {
     fn approve(e: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32) {
         from.require_auth();
         check_nonnegative_amount(amount);
-        storage::bump_instance(&e);
+        storage::extend_instance(&e);
 
         create_allowance(&e, &from, &spender, amount, expiration_ledger);
 
@@ -70,14 +70,14 @@ impl Token for MockToken {
     }
 
     fn balance(e: Env, id: Address) -> i128 {
-        storage::bump_instance(&e);
+        storage::extend_instance(&e);
         storage::get_balance(&e, &id)
     }
 
     fn transfer(e: Env, from: Address, to: Address, amount: i128) {
         from.require_auth();
         check_nonnegative_amount(amount);
-        storage::bump_instance(&e);
+        storage::extend_instance(&e);
 
         spend_balance(&e, &from, amount);
         receive_balance(&e, &to, amount);
@@ -88,7 +88,7 @@ impl Token for MockToken {
     fn transfer_from(e: Env, spender: Address, from: Address, to: Address, amount: i128) {
         spender.require_auth();
         check_nonnegative_amount(amount);
-        storage::bump_instance(&e);
+        storage::extend_instance(&e);
 
         spend_allowance(&e, &from, &spender, amount);
         spend_balance(&e, &from, amount);
@@ -100,7 +100,7 @@ impl Token for MockToken {
     fn burn(e: Env, from: Address, amount: i128) {
         from.require_auth();
         check_nonnegative_amount(amount);
-        storage::bump_instance(&e);
+        storage::extend_instance(&e);
 
         spend_balance(&e, &from, amount);
 
@@ -110,7 +110,7 @@ impl Token for MockToken {
     fn burn_from(e: Env, spender: Address, from: Address, amount: i128) {
         spender.require_auth();
         check_nonnegative_amount(amount);
-        storage::bump_instance(&e);
+        storage::extend_instance(&e);
 
         spend_allowance(&e, &from, &spender, amount);
         spend_balance(&e, &from, amount);

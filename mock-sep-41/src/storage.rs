@@ -44,10 +44,10 @@ pub enum DataKey {
 }
 
 /// Bump the instance lifetime by the defined amount
-pub fn bump_instance(e: &Env) {
+pub fn extend_instance(e: &Env) {
     e.storage()
         .instance()
-        .bump(INSTANCE_LIFETIME_THRESHOLD, INSTANCE_BUMP_AMOUNT);
+        .extend_ttl(INSTANCE_LIFETIME_THRESHOLD, INSTANCE_BUMP_AMOUNT);
 }
 
 /// Fetch an entry in persistent storage that has a default value if it doesn't exist
@@ -61,7 +61,7 @@ fn get_persistent_default<K: IntoVal<Env, Val>, V: TryFromVal<Env, Val>>(
     if let Some(result) = e.storage().persistent().get::<K, V>(key) {
         e.storage()
             .persistent()
-            .bump(key, bump_threshold, bump_amount);
+            .extend_ttl(key, bump_threshold, bump_amount);
         result
     } else {
         default
@@ -152,6 +152,6 @@ pub fn set_allowance(
             .unwrap_optimized();
         e.storage()
             .temporary()
-            .bump(&key, ledgers_to_live, ledgers_to_live);
+            .extend_ttl(&key, ledgers_to_live, ledgers_to_live);
     }
 }
