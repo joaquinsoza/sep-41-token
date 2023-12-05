@@ -642,7 +642,7 @@ dependencies = [
 
 [[package]]
 name = "mock-sep-41-token"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "sep-41-token",
  "soroban-sdk",
@@ -849,7 +849,7 @@ checksum = "836fa6a3e1e547f9a2c4040802ec865b5d85f4014efe00555d7090a3dcaa1090"
 
 [[package]]
 name = "sep-41-token"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "soroban-sdk",
 ]
