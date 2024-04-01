@@ -4,11 +4,11 @@ use soroban_sdk::{
 };
 
 pub(crate) const DAY_IN_LEDGERS: u32 = 17280;
-pub(crate) const INSTANCE_BUMP_AMOUNT: u32 = 8 * DAY_IN_LEDGERS;
+pub(crate) const INSTANCE_BUMP_AMOUNT: u32 = 31 * DAY_IN_LEDGERS;
 pub(crate) const INSTANCE_LIFETIME_THRESHOLD: u32 = INSTANCE_BUMP_AMOUNT - DAY_IN_LEDGERS;
 
-pub(crate) const BALANCE_BUMP_AMOUNT: u32 = 31 * DAY_IN_LEDGERS - 1;
-pub(crate) const BALANCE_LIFETIME_THRESHOLD: u32 = BALANCE_BUMP_AMOUNT - DAY_IN_LEDGERS;
+pub(crate) const BALANCE_BUMP_AMOUNT: u32 = 120 * DAY_IN_LEDGERS;
+pub(crate) const BALANCE_LIFETIME_THRESHOLD: u32 = BALANCE_BUMP_AMOUNT - 20 * DAY_IN_LEDGERS;
 
 const METADATA_KEY: Symbol = symbol_short!("METADATA");
 const ADMIN_KEY: Symbol = symbol_short!("ADMIN");

@@ -194,10 +194,10 @@ impl TokenEvents {
         from: Address,
         spender: Address,
         amount: i128,
-        expiration_ledger: u32,
+        live_until_ledger: u32,
     ) {
         let topics = (symbol_short!("approve"), from, spender);
-        env.events().publish(topics, (amount, expiration_ledger));
+        env.events().publish(topics, (amount, live_until_ledger));
     }
 
     /// Emitted when an amount is transferred from one address to another

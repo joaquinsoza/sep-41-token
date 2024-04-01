@@ -20,11 +20,13 @@ pub fn spend_allowance(e: &Env, from: &Address, spender: &Address, amount: i128)
     if allowance.amount < amount || e.ledger().sequence() > allowance.expiration_ledger {
         panic_with_error!(e, TokenError::AllowanceError);
     }
-    storage::set_allowance(
-        e,
-        from,
-        spender,
-        allowance.amount - amount,
-        allowance.expiration_ledger,
-    );
+    if amount > 0 {
+        storage::set_allowance(
+            e,
+            from,
+            spender,
+            allowance.amount - amount,
+            allowance.expiration_ledger,
+        );
+    }
 }

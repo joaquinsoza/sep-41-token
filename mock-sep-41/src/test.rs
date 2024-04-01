@@ -1,7 +1,11 @@
 #![cfg(test)]
 extern crate std;
 
-use crate::{contract::MockToken, MockTokenClient};
+use crate::{
+    contract::MockToken,
+    storage::{AllowanceDataKey, DataKey},
+    MockTokenClient,
+};
 use soroban_sdk::{
     symbol_short,
     testutils::{Address as _, AuthorizedFunction, AuthorizedInvocation},
@@ -253,4 +257,25 @@ fn decimal_is_over_max() {
         &"name".into_val(&e),
         &"symbol".into_val(&e),
     );
+}
+
+#[test]
+fn test_zero_allowance() {
+    // Here we test that transfer_from with a 0 amount does not create an empty allowance
+    let e = Env::default();
+    e.mock_all_auths();
+
+    let admin = Address::generate(&e);
+    let spender = Address::generate(&e);
+    let from = Address::generate(&e);
+    let token = create_token(&e, &admin);
+
+    token.transfer_from(&spender, &from, &spender, &0);
+    e.as_contract(&token.address, || {
+        let key = DataKey::Allowance(AllowanceDataKey {
+            from: from.clone(),
+            spender: spender.clone(),
+        });
+        assert!(!e.storage().temporary().has(&key));
+    });
 }
