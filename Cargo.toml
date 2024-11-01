@@ -5,7 +5,6 @@ members = [
     "sep-41",
     "mock-sep-41"
 ]
-
 [profile.release-with-logs]
 inherits = "release"
 debug-assertions = true
@@ -21,4 +20,4 @@ codegen-units = 1
 lto = true
 
 [workspace.dependencies.soroban-sdk]
-version = "20.5.0"
+version = "21.7.6"
